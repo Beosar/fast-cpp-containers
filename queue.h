@@ -39,13 +39,13 @@ public:
 		return *this;
 	}
 
-	queue(queue&& other) : Count(other.Count), Head(other.Head), Tail(other.Tail), Alloc(std::move(other.Alloc)) {
+	queue(queue&& other) noexcept : Count(other.Count), Head(other.Head), Tail(other.Tail), Alloc(std::move(other.Alloc)) {
 		other.Count = 0;
 		other.Head = nullptr;
 		other.Tail = nullptr;
 	}
 
-	queue& operator=(queue&& other) {
+	queue& operator=(queue&& other) noexcept {
 		Count = other.Count;
 		Head = other.Head;
 		Tail = other.Tail;
@@ -58,7 +58,7 @@ public:
 		return *this;
 	}
 
-	~queue() {
+	~queue() noexcept {
 		clear();
 	}
 
@@ -69,28 +69,28 @@ public:
 	using node_type = Node;
 	using allocator_type = TAlloc<Node>;
 
-	reference front() {
+	reference front() noexcept {
 		return Head->Data;
 	}
 	
-	const_reference front() const{
+	const_reference front() const noexcept {
 		return Head->Data;
 	}
 
 
-	reference back() {
+	reference back() noexcept {
 		return Tail->Data;
 	}
 
-	const_reference back() const {
+	const_reference back() const noexcept {
 		return Tail->Data;
 	}
 
-	bool empty() const {
+	bool empty() const noexcept {
 		return size() == 0;
 	}
 
-	size_type size() const {
+	size_type size() const noexcept {
 		return Count;
 	}
 
@@ -112,7 +112,7 @@ public:
 		++Count;
 	}
 	
-	void pop() {
+	void pop() noexcept {
 		auto t = Head;
 		Head = Head->Next;
 		t->~Node();
@@ -121,7 +121,7 @@ public:
 		--Count;
 	}
 		
-	void clear() {
+	void clear() noexcept {
 		while (!empty()) pop();
 	}
 

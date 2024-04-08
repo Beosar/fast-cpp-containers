@@ -107,7 +107,7 @@ public:
 		return allocate_chunk(pFirstAllocatedChunk);
 
 	}
-	inline void deallocate(void* pointer) {
+	inline void deallocate(const void* pointer) {
 		if (pointer == nullptr) return;
 		const auto pData = ((data*)pointer);
 		pData->pNext = FreeBegin;
@@ -123,7 +123,7 @@ public:
 		}
 	}
 
-	inline void deallocate(void* pointer, size_t n) {
+	inline void deallocate(const void* pointer, size_t n) {
 		if (n == 1) [[likely]] {
 			deallocate(pointer);
 		}
@@ -151,16 +151,31 @@ public:
 		return (T*)allocator.allocate(n);
 	}
 
-	inline void deallocate(T* pointer, size_t n) {
+	inline void deallocate(const T* pointer, size_t n) {
 		allocator.deallocate(pointer, n);
 	}
 
 	inline T* allocate() {
 		return (T*)allocator.allocate();
 	}
-	inline void deallocate(void* pointer) {	
+	inline void deallocate(const void* pointer) {	
 		allocator.deallocate(pointer);
 	}
+
+
+	template<typename... TArgs>
+	inline T* construct(TArgs&&... Args) {
+		const auto pointer = (T*)allocator.allocate(1);
+		new (pointer) T(std::forward<TArgs>(Args)...);
+		return pointer;
+	}
+
+	inline void destroy(const T* pointer) {
+		if (pointer == nullptr) return;
+		pointer->~T();
+		allocator.deallocate(pointer);
+	}
+
 };
 
 

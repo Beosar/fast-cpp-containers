@@ -26,37 +26,37 @@ private:
 		using difference_type = std::ptrdiff_t;
 		using iterator_category = std::bidirectional_iterator_tag;
 
-		iterator_t(Node* pCurrent) :pCurrent(pCurrent) {}
+		iterator_t(Node* pCurrent) noexcept :pCurrent(pCurrent) {}
 
 		template<typename U>
-		iterator_t(const iterator_t<U>& i, std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>>* = 0) {
+		iterator_t(const iterator_t<U>& i, std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>>* = 0) noexcept {
 			pCurrent = i.pCurrent;
 		}
 
 		template<typename U>
-		std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>, iterator_t>& operator=(const iterator_t<U>& i) {
+		std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>, iterator_t>& operator=(const iterator_t<U>& i) noexcept {
 			pCurrent = i.pCurrent;
 			return *this;
 		}
 
 		template<typename U>
-		bool operator==(const iterator_t<U>& i) const {
+		bool operator==(const iterator_t<U>& i) const noexcept {
 			return pCurrent == i.pCurrent;
 		}
 
 		template<typename U>
-		bool operator!=(const iterator_t<U>& i) const {
+		bool operator!=(const iterator_t<U>& i) const noexcept {
 			return pCurrent != i.pCurrent;
 
 		}
 
-		iterator_t& operator++() {
+		iterator_t& operator++() noexcept {
 
 			pCurrent = pCurrent->Next;
 
 			return *this;
 		}
-		iterator_t operator++(int) {
+		iterator_t operator++(int) noexcept {
 
 			const auto Result = pCurrent;
 			pCurrent = pCurrent->Next;
@@ -64,14 +64,14 @@ private:
 			return pCurrent;
 		}
 
-		iterator_t& operator--() {
+		iterator_t& operator--() noexcept {
 
 			pCurrent = pCurrent->Prev;
 
 			return *this;
 		}
 
-		iterator_t operator--(int) {
+		iterator_t operator--(int) noexcept {
 
 			const auto Result = pCurrent;
 			pCurrent = pCurrent->Prev;
@@ -79,7 +79,7 @@ private:
 			return pCurrent;
 		}
 
-		iterator_t operator+(const difference_type Offset) const {
+		iterator_t operator+(const difference_type Offset) const noexcept {
 			auto it = *this;
 			for (difference_type i = 0; i < Offset; ++i) {
 				++it;
@@ -90,7 +90,7 @@ private:
 			return it;
 		}
 
-		iterator_t& operator+=(const difference_type Offset) {
+		iterator_t& operator+=(const difference_type Offset) noexcept {
 			for (difference_type i = 0; i < Offset; ++i) {
 				++(*this);
 			}
@@ -100,7 +100,7 @@ private:
 			return *this;
 		}
 
-		iterator_t operator-(const difference_type Offset) const {
+		iterator_t operator-(const difference_type Offset) const noexcept {
 			auto it = *this;
 			for (difference_type i = 0; i < Offset; ++i) {
 				--it;
@@ -111,7 +111,7 @@ private:
 			return it;
 		}
 
-		iterator_t& operator-=(const difference_type Offset) {
+		iterator_t& operator-=(const difference_type Offset) noexcept {
 			for (difference_type i = 0; i < Offset; ++i) {
 				--(*this);
 			}
@@ -121,10 +121,10 @@ private:
 			return *this;
 		}
 
-		T operator->() const {
+		T operator->() const noexcept {
 			return &(pCurrent->Data);
 		}
-		T& operator*() const {
+		T& operator*() const noexcept {
 			return pCurrent->Data;
 		}
 
@@ -144,47 +144,47 @@ private:
 		using difference_type = std::ptrdiff_t;
 		using iterator_category = std::bidirectional_iterator_tag;
 
-		reverse_iterator_t(Node* pCurrent) :pCurrent(pCurrent) {}
+		reverse_iterator_t(Node* pCurrent) noexcept :pCurrent(pCurrent) {}
 
 		template<typename U>
-		reverse_iterator_t(const iterator_t<U>& i, std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>>* = 0) {
+		reverse_iterator_t(const iterator_t<U>& i, std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>>* = 0) noexcept {
 			pCurrent = i.pCurrent;
 		}
 		template<typename U>
-		reverse_iterator_t(const reverse_iterator_t<U>& i, std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>>* = 0) {
+		reverse_iterator_t(const reverse_iterator_t<U>& i, std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>>* = 0) noexcept {
 			pCurrent = i.pCurrent;
 		}
 
 		template<typename U>
-		std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>, reverse_iterator_t>& operator=(const reverse_iterator_t<U>& i) {
+		std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>, reverse_iterator_t>& operator=(const reverse_iterator_t<U>& i) noexcept {
 			pCurrent = i.pCurrent;
 			return *this;
 		}
 		
 		template<typename U>
-		std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>, reverse_iterator_t>& operator=(const iterator_t<U>& i) {
+		std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>, reverse_iterator_t>& operator=(const iterator_t<U>& i) noexcept {
 			pCurrent = i.pCurrent;
 			return *this;
 		}
 
 		template<typename U>
-		bool operator==(const reverse_iterator_t<U>& i) const {
+		bool operator==(const reverse_iterator_t<U>& i) const noexcept {
 			return pCurrent == i.pCurrent;
 		}
 
 		template<typename U>
-		bool operator!=(const reverse_iterator_t<U>& i) const {
+		bool operator!=(const reverse_iterator_t<U>& i) const noexcept {
 			return pCurrent != i.pCurrent;
 
 		}
 
-		reverse_iterator_t& operator++() {
+		reverse_iterator_t& operator++() noexcept {
 
 			pCurrent = pCurrent->Prev;
 
 			return *this;
 		}
-		reverse_iterator_t operator++(int) {
+		reverse_iterator_t operator++(int) noexcept {
 
 			const auto Result = pCurrent;
 			pCurrent = pCurrent->Prev;
@@ -192,14 +192,14 @@ private:
 			return pCurrent;
 		}
 
-		reverse_iterator_t& operator--() {
+		reverse_iterator_t& operator--() noexcept {
 
 			pCurrent = pCurrent->Next;
 
 			return *this;
 		}
 
-		reverse_iterator_t operator--(int) {
+		reverse_iterator_t operator--(int) noexcept {
 
 			const auto Result = pCurrent;
 			pCurrent = pCurrent->Next;
@@ -207,7 +207,7 @@ private:
 			return pCurrent;
 		}
 
-		reverse_iterator_t operator+(const difference_type Offset) const {
+		reverse_iterator_t operator+(const difference_type Offset) const noexcept {
 			auto it = *this;
 			for (difference_type i = 0; i < Offset; ++i) {
 				++it;
@@ -218,7 +218,7 @@ private:
 			return it;
 		}
 
-		reverse_iterator_t& operator+=(const difference_type Offset) {
+		reverse_iterator_t& operator+=(const difference_type Offset) noexcept {
 			for (difference_type i = 0; i < Offset; ++i) {
 				++(*this);
 			}
@@ -228,7 +228,7 @@ private:
 			return *this;
 		}
 
-		reverse_iterator_t operator-(const difference_type Offset) const {
+		reverse_iterator_t operator-(const difference_type Offset) const noexcept {
 			auto it = *this;
 			for (difference_type i = 0; i < Offset; ++i) {
 				--it;
@@ -239,7 +239,7 @@ private:
 			return it;
 		}
 
-		reverse_iterator_t& operator-=(const difference_type Offset) {
+		reverse_iterator_t& operator-=(const difference_type Offset) noexcept {
 			for (difference_type i = 0; i < Offset; ++i) {
 				--(*this);
 			}
@@ -249,10 +249,10 @@ private:
 			return *this;
 		}
 
-		T operator->() const {
+		T operator->() const noexcept {
 			return &(pCurrent->Data);
 		}
-		T& operator*() const {
+		T& operator*() const noexcept {
 			return pCurrent->Data;
 		}
 
@@ -293,13 +293,13 @@ public:
 		return *this;
 	}
 
-	list(list&& other) : Count(other.Count), Head(other.Head), Tail(other.Tail), Alloc(std::move(other.Alloc)) {
+	list(list&& other) noexcept : Count(other.Count), Head(other.Head), Tail(other.Tail), Alloc(std::move(other.Alloc)) {
 		other.Count = 0;
 		other.Head = nullptr;
 		other.Tail = nullptr;
 	}
 
-	list& operator=(list&& other) {
+	list& operator=(list&& other) noexcept {
 		Count = other.Count;
 		Head = other.Head;
 		Tail = other.Tail;
@@ -313,7 +313,7 @@ public:
 	}
 
 
-	bool operator==(const list& other) const {
+	bool operator==(const list& other) const noexcept {
 		if (size() != other.size()) return false;
 		for (auto it1 = cbegin(), it2 = other.cbegin(); it1 != end(); ++it1, ++it2) {
 			if (*it1 != *it2) return false;
@@ -321,85 +321,85 @@ public:
 		return true;
 	}
 
-	bool operator!=(const list& other) const {
+	bool operator!=(const list& other) const noexcept {
 		return !(*this == other);
 	}
 
-	~list() {
+	~list() noexcept {
 		clear();
 	}
 
-	iterator begin() {
+	iterator begin() noexcept {
 		return Head;
 	}
 
-	iterator end() {
+	iterator end() noexcept {
 		return nullptr;
 	}
 
-	const_iterator begin() const {
+	const_iterator begin() const noexcept {
 		return Head;
 	}
 
-	const_iterator end() const {
+	const_iterator end() const noexcept {
 		return nullptr;
 	}
 
-	const_iterator cbegin() const {
+	const_iterator cbegin() const noexcept {
 		return Head;
 	}
 
-	const_iterator cend() const {
+	const_iterator cend() const noexcept {
 		return nullptr;
 	}
 
-	reverse_iterator rbegin() {
+	reverse_iterator rbegin() noexcept {
 		return Tail;
 	}
 
-	reverse_iterator rend() {
+	reverse_iterator rend() noexcept {
 		return nullptr;
 	}
 
-	const_reverse_iterator rbegin() const {
+	const_reverse_iterator rbegin() const noexcept {
 		return Tail;
 	}
 
-	const_reverse_iterator rend() const {
+	const_reverse_iterator rend() const noexcept {
 		return nullptr;
 	}
 
-	const_reverse_iterator crbegin() const {
+	const_reverse_iterator crbegin() const noexcept {
 		return Tail;
 	}
 
-	const_reverse_iterator crend() const {
+	const_reverse_iterator crend() const noexcept {
 		return nullptr;
 	}
 
 
-	reference front() {
+	reference front() noexcept {
 		return Head->Data;
 	}
 	
-	const_reference front() const{
+	const_reference front() const noexcept {
 		return Head->Data;
 	}
 
 
-	reference back() {
+	reference back() noexcept {
 		return Tail->Data;
 	}
 
-	const_reference back() const {
+	const_reference back() const noexcept {
 		return Tail->Data;
 	}
 
-	bool empty() const {
+	bool empty() const noexcept {
 		return size() == 0;
 	}
 
-	size_type size() const {
+	size_type size() const noexcept {
 		return Count;
 	}
 
@@ -469,7 +469,7 @@ public:
 		}
 	}
 	
-	void pop_front() {
+	void pop_front() noexcept {
 		auto t = Head;
 		Head = Head->Next;
 		if (Head != nullptr) {
@@ -484,7 +484,7 @@ public:
 		--Count;
 	}
 
-	void pop_back() {
+	void pop_back() noexcept {
 		auto t = Tail;
 		Tail = Tail->Prev;
 		if (Tail != nullptr) {
@@ -499,7 +499,7 @@ public:
 		--Count;
 	}
 
-	iterator erase(const_iterator it) {
+	iterator erase(const_iterator it) noexcept {
 		if (it.pCurrent == Tail) {
 			pop_back();
 			return end();
@@ -524,7 +524,7 @@ public:
 	}
 
 		
-	void clear() {
+	void clear() noexcept {
 		while (!empty()) pop_back();
 	}
 

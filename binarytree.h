@@ -30,26 +30,26 @@ private:
 		using iterator_category = std::bidirectional_iterator_tag;
 
 
-		iterator_t(AvlNode* pCurrent) :pCurrent(pCurrent) {}
+		iterator_t(AvlNode* pCurrent) noexcept :pCurrent(pCurrent) {}
 
 		template<typename U>
-		iterator_t(const iterator_t<U>& i, std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>>* = 0) {
+		iterator_t(const iterator_t<U>& i, std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>>* = 0) noexcept {
 			pCurrent = i.pCurrent;
 		}
 
 		template<typename U>
-		std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>, iterator_t>& operator=(const iterator_t<U>& i) {
+		std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>, iterator_t>& operator=(const iterator_t<U>& i) noexcept {
 			pCurrent = i.pCurrent;
 			return *this;
 		}
 
 		template<typename U>
-		bool operator==(const iterator_t<U>& i) const {
+		bool operator==(const iterator_t<U>& i) const noexcept {
 			return pCurrent == i.pCurrent;
 		}
 
 		template<typename U>
-		bool operator!=(const iterator_t<U>& i) const {
+		bool operator!=(const iterator_t<U>& i) const noexcept {
 			return pCurrent != i.pCurrent;
 
 		}
@@ -131,7 +131,7 @@ private:
 			return pCurrent;
 		}
 
-		iterator_t operator+(const difference_type Offset) const {
+		iterator_t operator+(const difference_type Offset) const noexcept {
 			auto it = *this;
 			for (difference_type i = 0; i < Offset; ++i) {
 				++it;
@@ -142,7 +142,7 @@ private:
 			return it;
 		}
 
-		iterator_t& operator+=(const difference_type Offset) {
+		iterator_t& operator+=(const difference_type Offset) noexcept {
 			for (difference_type i = 0; i < Offset; ++i) {
 				++(*this);
 			}
@@ -152,7 +152,7 @@ private:
 			return *this;
 		}
 
-		iterator_t operator-(const difference_type Offset) const {
+		iterator_t operator-(const difference_type Offset) const noexcept {
 			auto it = *this;
 			for (difference_type i = 0; i < Offset; ++i) {
 				--it;
@@ -163,7 +163,7 @@ private:
 			return it;
 		}
 
-		iterator_t& operator-=(const difference_type Offset) {
+		iterator_t& operator-=(const difference_type Offset) noexcept {
 			for (difference_type i = 0; i < Offset; ++i) {
 				--(*this);
 			}
@@ -173,10 +173,10 @@ private:
 			return *this;
 		}
 
-		T* operator->() const {
+		T* operator->() const noexcept {
 			return &(pCurrent->Data.Value);
 		}
-		T& operator*() const {
+		T& operator*() const noexcept {
 			return pCurrent->Data.Value;
 		}
 
@@ -199,41 +199,41 @@ private:
 		using iterator_category = std::bidirectional_iterator_tag;
 
 
-		reverse_iterator_t(AvlNode* pCurrent) :pCurrent(pCurrent) {}
+		reverse_iterator_t(AvlNode* pCurrent) noexcept :pCurrent(pCurrent) {}
 
 		template<typename U>
-		reverse_iterator_t(const iterator_t<U>& i, std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>>* = 0) {
+		reverse_iterator_t(const iterator_t<U>& i, std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>>* = 0) noexcept {
 			pCurrent = i.pCurrent;
 		}
 		template<typename U>
-		reverse_iterator_t(const reverse_iterator_t<U>& i, std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>>* = 0) {
+		reverse_iterator_t(const reverse_iterator_t<U>& i, std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>>* = 0) noexcept {
 			pCurrent = i.pCurrent;
 		}
 
 		template<typename U>
-		std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>, reverse_iterator_t>& operator=(const reverse_iterator_t<U>& i) {
-			pCurrent = i.pCurrent;
-			return *this;
-		}
-
-		template<typename U>
-		std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>, reverse_iterator_t>& operator=(const iterator_t<U>& i) {
+		std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>, reverse_iterator_t>& operator=(const reverse_iterator_t<U>& i) noexcept {
 			pCurrent = i.pCurrent;
 			return *this;
 		}
 
 		template<typename U>
-		bool operator==(const reverse_iterator_t<U>& i) const {
+		std::enable_if_t<std::is_const_v<T> || !std::is_const_v<U>, reverse_iterator_t>& operator=(const iterator_t<U>& i) noexcept {
+			pCurrent = i.pCurrent;
+			return *this;
+		}
+
+		template<typename U>
+		bool operator==(const reverse_iterator_t<U>& i) const noexcept {
 			return pCurrent == i.pCurrent;
 		}
 
 		template<typename U>
-		bool operator!=(const reverse_iterator_t<U>& i) const {
+		bool operator!=(const reverse_iterator_t<U>& i) const noexcept {
 			return pCurrent != i.pCurrent;
 
 		}
 
-		reverse_iterator_t& operator++() {
+		reverse_iterator_t& operator++() noexcept {
 
 			if (pCurrent->left != nullptr) {
 				pCurrent = pCurrent->left;
@@ -263,7 +263,7 @@ private:
 			return *this;
 		}
 
-		reverse_iterator_t& operator--() {
+		reverse_iterator_t& operator--() noexcept {
 
 			if (pCurrent->right != nullptr) {
 				pCurrent = pCurrent->right;
@@ -293,7 +293,7 @@ private:
 			return *this;
 		}
 
-		reverse_iterator_t operator++(int) {
+		reverse_iterator_t operator++(int) noexcept {
 
 			const auto Result = pCurrent;
 			++(*this);
@@ -301,7 +301,7 @@ private:
 			return pCurrent;
 		}
 
-		reverse_iterator_t operator--(int) {
+		reverse_iterator_t operator--(int) noexcept {
 
 			const auto Result = pCurrent;
 			--(*this);
@@ -309,7 +309,7 @@ private:
 			return pCurrent;
 		}
 
-		reverse_iterator_t operator+(const difference_type Offset) const {
+		reverse_iterator_t operator+(const difference_type Offset) const noexcept {
 			auto it = *this;
 			for (difference_type i = 0; i < Offset; ++i) {
 				++it;
@@ -320,7 +320,7 @@ private:
 			return it;
 		}
 
-		reverse_iterator_t& operator+=(const difference_type Offset) {
+		reverse_iterator_t& operator+=(const difference_type Offset) noexcept {
 			for (difference_type i = 0; i < Offset; ++i) {
 				++(*this);
 			}
@@ -330,7 +330,7 @@ private:
 			return *this;
 		}
 
-		reverse_iterator_t operator-(const difference_type Offset) const {
+		reverse_iterator_t operator-(const difference_type Offset) const noexcept {
 			auto it = *this;
 			for (difference_type i = 0; i < Offset; ++i) {
 				--it;
@@ -341,7 +341,7 @@ private:
 			return it;
 		}
 
-		reverse_iterator_t& operator-=(const difference_type Offset) {
+		reverse_iterator_t& operator-=(const difference_type Offset) noexcept {
 			for (difference_type i = 0; i < Offset; ++i) {
 				--(*this);
 			}
@@ -352,10 +352,10 @@ private:
 		}
 
 
-		T* operator->() const {
+		T* operator->() const noexcept {
 			return &(pCurrent->Data.Value);
 		}
-		T& operator*() const {
+		T& operator*() const noexcept {
 			return pCurrent->Data.Value;
 		}
 
@@ -393,7 +393,7 @@ public:
 		: Alloc(alloc) {}
 
 	template<typename U>
-	explicit tree(TAlloc<U>&& Alloc) : Alloc(std::move(Alloc)) {}
+	explicit tree(TAlloc<U>&& Alloc) noexcept : Alloc(std::move(Alloc)) {}
 
 	tree(const tree& other) : comp(other.comp), Alloc(std::allocator_traits<allocator_type>::select_on_container_copy_construction(other.Alloc)) {
 		for (const auto& i : other) emplace(i);
@@ -407,12 +407,12 @@ public:
 		return *this;
 	}
 
-	tree(tree&& other) : comp(std::move(other.comp)), Count(other.Count), root(other.root), Alloc(std::move(other.Alloc)) {
+	tree(tree&& other) noexcept : comp(std::move(other.comp)), Count(other.Count), root(other.root), Alloc(std::move(other.Alloc)) {
 		other.Count = 0;
 		other.root = nullptr;
 	}
 
-	tree& operator=(tree&& other) {
+	tree& operator=(tree&& other) noexcept {
 		Count = other.Count;
 		root = other.root;
 		Alloc = std::move(other.Alloc);
@@ -424,11 +424,11 @@ public:
 		return *this;
 	}
 
-	~tree(){
+	~tree() noexcept {
 		clear();
 	}
 
-	bool operator==(const tree& other) const {
+	bool operator==(const tree& other) const noexcept {
 		if (size() != other.size()) return false;
 		for (auto it1 = cbegin(), it2 = other.cbegin(); it1 != end(); ++it1, ++it2) {
 			if (*it1 != *it2) return false;
@@ -436,16 +436,16 @@ public:
 		return true;
 	}
 
-	bool operator!=(const tree& other) const {
+	bool operator!=(const tree& other) const noexcept {
 		return !(*this == other);
 	}
 
-	bool empty() const {
+	bool empty() const noexcept {
 		return root == nullptr;
 	}
 
 
-	iterator begin(){
+	iterator begin() noexcept {
 		auto Current = root;
 		if (Current != nullptr) {
 			while (Current->left != nullptr) {
@@ -455,11 +455,11 @@ public:
 		return Current;
 	}
 
-	iterator end() {
+	iterator end() noexcept {
 		return nullptr;
 	}
 
-	const_iterator begin() const {
+	const_iterator begin() const noexcept {
 		auto Current = root;
 		if (Current != nullptr) {
 			while (Current->left != nullptr) {
@@ -469,19 +469,19 @@ public:
 		return Current;
 	}
 
-	const_iterator end() const {
+	const_iterator end() const noexcept {
 		return nullptr;
 	}
 
-	const_iterator cbegin() const {
+	const_iterator cbegin() const noexcept {
 		return begin();
 	}
 
-	const_iterator cend() const {
+	const_iterator cend() const noexcept {
 		return end();
 	}
 	
-	reverse_iterator rbegin() {
+	reverse_iterator rbegin() noexcept {
 		auto Current = root;
 		if (Current != nullptr) {
 			while (Current->right != nullptr) {
@@ -491,11 +491,11 @@ public:
 		return Current;
 	}
 
-	reverse_iterator rend() {
+	reverse_iterator rend() noexcept {
 		return nullptr;
 	}
 
-	const_reverse_iterator rbegin() const {
+	const_reverse_iterator rbegin() const noexcept {
 		auto Current = root;
 		if (Current != nullptr) {
 			while (Current->right != nullptr) {
@@ -505,15 +505,15 @@ public:
 		return Current;
 	}
 
-	const_reverse_iterator rend() const {
+	const_reverse_iterator rend() const noexcept {
 		return nullptr;
 	}
 
-	const_reverse_iterator crbegin() const {
+	const_reverse_iterator crbegin() const noexcept {
 		return begin();
 	}
 
-	const_reverse_iterator crend() const {
+	const_reverse_iterator crend() const noexcept {
 		return end();
 	}
 
@@ -535,7 +535,7 @@ public:
 		return result;
 	}
 
-	iterator erase(const iterator Where) {
+	iterator erase(const iterator Where) noexcept {
 		auto Result = Where;
 		++Result;
 		if (Where.pCurrent->parent != nullptr) {
@@ -555,60 +555,27 @@ public:
 		return Result;
 	}
 
-	size_t erase(const typename T::key_type& x) {
+	size_t erase(const typename T::key_type& x) noexcept {
 		const auto SizeBefore = size();
 		root = DeleteNode(root, x);
 		
 		return SizeBefore - size();
 	}
 
-	void clear(){
+	void clear() noexcept {
 		MakeEmpty(root);
 		root = nullptr;
 		Count = 0;
 
 	}
 
-	size_t size() const {
+	size_t size() const noexcept {
 		return Count;
 	}
 
-#ifdef _DEBUG
-
-	void check_tree() const {
-		const auto CheckTreeRes = check_tree(root, nullptr);
-		assert(CheckTreeRes == size());
-	}
-
-#endif
-
 private:
 
-#ifdef _DEBUG
-
-	size_t check_tree(AvlNode* t, AvlNode* parent) const {
-		if (t == nullptr) return 0;
-		assert(t->parent == parent);
-
-		if (t->left != nullptr) {
-			assert(comp(t->left->Data.GetKey(), t->Data.GetKey()));
-		}
-
-		if (t->right != nullptr) {
-			assert(comp(t->Data.GetKey(), t->right->Data.GetKey()));
-		}
-
-		assert(t->height == std::max(Height(t->left), Height(t->right)) + 1);
-		const auto balance = GetBalance(t);
-		assert(balance >= -1 && balance <= 1);
-
-		return check_tree(t->left, t) + check_tree(t->right, t) + 1;
-	}
-
-#endif
-
-
-	AvlNode* Insert(AvlNode* const pNode, AvlNode* const parent, AvlNode* const t, std::pair<iterator, bool>& result){
+	AvlNode* Insert(AvlNode* const pNode, AvlNode* const parent, AvlNode* const t, std::pair<iterator, bool>& result) {
 		if (t == nullptr){		
 			pNode->parent = parent;
 			Count++;
@@ -657,11 +624,11 @@ private:
 		return t;
 	}
 
-	static int Height(AvlNode* t){
+	static int Height(AvlNode* t) noexcept {
 		return t == 0 ? -1 : t->height;
 	}
 
-	AvlNode* LeftRotate(AvlNode* t){
+	static AvlNode* LeftRotate(AvlNode* t) noexcept {
 
 		const auto y = t->right;
 		const auto T2 = y->left;
@@ -683,7 +650,7 @@ private:
 		return y;
 	}
 
-	AvlNode* RightRotate(AvlNode* t){
+	static AvlNode* RightRotate(AvlNode* t) noexcept {
 
 		const auto x = t->left;
 		const auto T2 = x->right;
@@ -706,7 +673,7 @@ private:
 	}
 	
 
-	AvlNode* FindMin(AvlNode* t){
+	static AvlNode* FindMin(AvlNode* t) noexcept {
 		if (t == 0)
 			return t;
 
@@ -716,7 +683,7 @@ private:
 		return t;
 	}
 
-	AvlNode* FindMax(AvlNode* t){
+	static AvlNode* FindMax(AvlNode* t) noexcept {
 		if (t == 0)
 			return t;
 
@@ -726,7 +693,7 @@ private:
 		return t;
 	}
 
-	iterator Find(const typename T::key_type& x, AvlNode* t) const{
+	iterator Find(const typename T::key_type& x, AvlNode* t) noexcept {
 		while (t != 0){
 			if (comp(x, t->Data.GetKey()))
 				t = t->left;
@@ -738,7 +705,7 @@ private:
 		return nullptr;
 	}
 
-	iterator LowerBound(const typename T::key_type& x, AvlNode* t) const {
+	iterator LowerBound(const typename T::key_type& x, AvlNode* t) noexcept {
 		while (t != 0) {
 			if (comp(x, t->Data.GetKey())) {
 				if (t->left != nullptr) {
@@ -765,14 +732,14 @@ private:
 		return nullptr;
 	}
 	
-	iterator UpperBound(const typename T::key_type& x, AvlNode* t) const {
+	iterator UpperBound(const typename T::key_type& x, AvlNode* t) noexcept {
 		auto it = LowerBound(x, t);
 		if (it != end() && !comp(x, it.pCurrent->Data.GetKey())) ++it;
 		return it;
 	}
 
 
-	AvlNode* UpdateOnDelete(AvlNode* t) {
+	static AvlNode* UpdateOnDelete(AvlNode* t) noexcept {
 		t->height = std::max(Height(t->left), Height(t->right)) + 1;
 
 		const int balance = GetBalance(t);
@@ -797,7 +764,7 @@ private:
 	}
 
 
-	AvlNode* DeleteNodeUnchecked(AvlNode* t) {
+	AvlNode* DeleteNodeUnchecked(AvlNode* t) noexcept {
 		if (t->left == nullptr || t->right == nullptr) {
 			AvlNode* temp = t;
 
@@ -864,7 +831,7 @@ private:
 
 	}
 
-	AvlNode* DeleteNode(AvlNode* t, const typename T::key_type& ID){
+	AvlNode* DeleteNode(AvlNode* t, const typename T::key_type& ID)noexcept {
 		if (t == nullptr)
 			return t;
 
@@ -881,12 +848,12 @@ private:
 
 		return UpdateOnDelete(t);
 	}
-	static int GetBalance(AvlNode* t){
+	static int GetBalance(AvlNode* t) noexcept {
 		if (t == nullptr)
 			return 0;
 		return Height(t->left) - Height(t->right);
 	}
-	void MakeEmpty(AvlNode* t){
+	void MakeEmpty(AvlNode* t) noexcept {
 		if (t == nullptr) return;
 		MakeEmpty(t->left);
 		MakeEmpty(t->right);
@@ -896,26 +863,26 @@ private:
 
 public:
 
-	iterator find(const typename T::key_type& x) {
+	iterator find(const typename T::key_type& x) noexcept {
 		return Find(x, root);
 	}
-	const_iterator find(const typename T::key_type& x) const {
+	const_iterator find(const typename T::key_type& x) const noexcept {
 		return Find(x, root);
 	}
 
-	iterator lower_bound(const typename T::key_type& x) {
+	iterator lower_bound(const typename T::key_type& x) noexcept {
 		return LowerBound(x, root);
 	}
 		
-	const_iterator lower_bound(const typename T::key_type& x) const {
+	const_iterator lower_bound(const typename T::key_type& x) const noexcept {
 		return LowerBound(x, root);
 	}
 
-	iterator upper_bound(const typename T::key_type& x) {
+	iterator upper_bound(const typename T::key_type& x) noexcept {
 		return UpperBound(x, root);
 	}
 
-	const_iterator upper_bound(const typename T::key_type& x) const {
+	const_iterator upper_bound(const typename T::key_type& x) const noexcept {
 		return UpperBound(x, root);
 	}
 
