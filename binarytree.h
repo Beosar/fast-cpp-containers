@@ -693,7 +693,7 @@ private:
 		return t;
 	}
 
-	iterator Find(const typename T::key_type& x, AvlNode* t) noexcept {
+	iterator Find(const typename T::key_type& x, AvlNode* t) const noexcept {
 		while (t != 0){
 			if (comp(x, t->Data.GetKey()))
 				t = t->left;
@@ -705,7 +705,7 @@ private:
 		return nullptr;
 	}
 
-	iterator LowerBound(const typename T::key_type& x, AvlNode* t) noexcept {
+	iterator LowerBound(const typename T::key_type& x, AvlNode* t) const noexcept {
 		while (t != 0) {
 			if (comp(x, t->Data.GetKey())) {
 				if (t->left != nullptr) {
@@ -732,7 +732,7 @@ private:
 		return nullptr;
 	}
 	
-	iterator UpperBound(const typename T::key_type& x, AvlNode* t) noexcept {
+	iterator UpperBound(const typename T::key_type& x, AvlNode* t) const noexcept {
 		auto it = LowerBound(x, t);
 		if (it != end() && !comp(x, it.pCurrent->Data.GetKey())) ++it;
 		return it;
