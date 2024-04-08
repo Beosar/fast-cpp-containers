@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <array>
 
 template<size_t TypeSize, size_t Alignment, template<typename Ty> class TAlloc, size_t ElementsPerChunk>
 class chunk_allocator_typeless_single_threaded {
@@ -32,6 +33,10 @@ private:
 	static constexpr size_t ElementSize = sizeof(allocated_type);
 
 	TAlloc<allocated_type> Allocator;
+
+	template<typename T> static constexpr std::enable_if_t<std::is_unsigned<T>::value, T> UintDivideCeil(const T& a, const T& b) {
+		return a / b + (((a % b) != 0) ? 1 : 0);
+	}
 
 	static constexpr auto Offset = UintDivideCeil(sizeof(pointer_and_size), ElementSize) * ElementSize;
 	static constexpr size_t AllocSize = ElementsPerChunk + UintDivideCeil(sizeof(pointer_and_size), ElementSize);

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <utility>
+#include <iterator>
+#include <memory>
 
 template <typename T, typename Compare, template<typename Ty> class TAlloc>
 class tree {
@@ -785,13 +787,9 @@ private:
 
 			t = FindMin(t->right);
 
-			assert(t->left == nullptr);
-
 			const bool UpdatedPTRight = temp->right != t;
 
 			if (UpdatedPTRight) {		
-				
-				assert(t->parent->left == t);
 
 				t->parent->left = t->right;
 				if (t->parent->left != nullptr) {
