@@ -14,7 +14,7 @@ public:
 		AvlNode* left = nullptr;
 		AvlNode* right = nullptr;
 		AvlNode* parent = nullptr;
-		int height = 0;
+		int16_t heightLeft = 0, heightRight = 0; //height of child + 1
 		T Data;
 	};
 
@@ -522,12 +522,11 @@ public:
 
 	template<typename... TArgs>
 	std::pair<iterator,bool> emplace(TArgs&&... Args){
-		std::pair<iterator, bool> result(nullptr, false);
 		
 		const auto pNode = Alloc.allocate(1);
 		new (pNode) AvlNode(std::forward<TArgs>(Args)...);
 
-		root = Insert(pNode, nullptr, root, result);
+		auto result = Insert(pNode);
 		
 		if (!result.second) {
 			pNode->~AvlNode();
@@ -577,57 +576,83 @@ public:
 
 private:
 
-	AvlNode* Insert(AvlNode* const pNode, AvlNode* const parent, AvlNode* const t, std::pair<iterator, bool>& result) {
-		if (t == nullptr){		
-			pNode->parent = parent;
-			Count++;
-			result.first = pNode;
-			result.second = true;
-			return pNode;
-		}
-		if (comp(pNode->Data.GetKey(), t->Data.GetKey())){
-			t->left = Insert(pNode, t, t->left, result);
-		}
-		else if (comp(t->Data.GetKey(), pNode->Data.GetKey())){
-			t->right = Insert(pNode, t, t->right, result);
-		}
-		else{
-			result.first = t;
-			result.second = false;
-			return t;
-		}
-
-		if (!result.second) return t;
+	std::pair<iterator, bool> Insert(AvlNode* const pNode) {
 
 		
-		t->height = std::max(Height(t->left), Height(t->right)) + 1;
+		auto t = root;
+		std::array<AvlNode**, 64> Stack; //parent, pointer to child pointer
+		auto pStack = Stack.data();
+		AvlNode* parent = nullptr;
 
-		const int balance = GetBalance(t);
+		while (t != nullptr) {
+			if (comp(pNode->Data.GetKey(), t->Data.GetKey())) {
+				parent = t;
+				*pStack = &t->left;
+				++pStack;
+				t = t->left;
 
-		
-		if (balance > 1 && comp(pNode->Data.GetKey(), t->left->Data.GetKey()))
-			return RightRotate(t);
-
-		if (balance < -1 && comp(t->right->Data.GetKey(), pNode->Data.GetKey()))
-			return LeftRotate(t);
-
-		if (balance > 1 && comp(t->left->Data.GetKey(), pNode->Data.GetKey()))
-		{
-			t->left = LeftRotate(t->left);
-			return RightRotate(t);
+			}
+			else if (comp(t->Data.GetKey(), pNode->Data.GetKey())) {
+				parent = t;
+				*pStack = &t->right;
+				++pStack;
+				t = t->right;
+			}
+			else {
+				return { t, false };
+			}
 		}
 
-		if (balance < -1 && comp(pNode->Data.GetKey(), t->right->Data.GetKey()))
-		{
-			t->right = RightRotate(t->right);
-			return LeftRotate(t);
+		pNode->parent = parent;
+		Count++;
+
+		t = pNode;
+		--pStack;
+		for (; pStack >= Stack.data(); --pStack) {
+
+			**pStack = t;
+			t = t->parent;
+
+			const auto isLeft = *pStack == &t->left;
+			auto& rHeight = isLeft ? t->heightLeft : t->heightRight;
+
+			const auto height = rHeight;
+			rHeight = Height(**pStack) + 1;
+			const bool HeightChanged = rHeight != height;
+			
+			const int balance = GetBalance(t);
+
+
+			if (balance > 1) {
+
+				if (comp(t->left->Data.GetKey(), pNode->Data.GetKey())){
+					t->left = LeftRotate(t->left);
+				}
+				t = RightRotate(t);
+				
+			}
+			else if (balance < -1){
+				if (comp(pNode->Data.GetKey(), t->right->Data.GetKey())) {
+					t->right = RightRotate(t->right);
+				}
+				t = LeftRotate(t);
+			}
+			else if (!HeightChanged) {
+				return { pNode, true };
+			}
+
+
+
 		}
 
-		return t;
+		root = t;
+
+		return { pNode, true };
+
 	}
 
-	static int Height(AvlNode* t) noexcept {
-		return t == 0 ? -1 : t->height;
+	static int16_t Height(AvlNode* t) noexcept {
+		return t == 0 ? -1 : std::max(t->heightLeft, t->heightRight);
 	}
 
 	static AvlNode* LeftRotate(AvlNode* t) noexcept {
@@ -646,8 +671,8 @@ private:
 
 		y->parent = parent;
 
-		t->height = std::max(Height(t->left), Height(t->right)) + 1;
-		y->height = std::max(Height(y->left), Height(y->right)) + 1;
+		UpdateHeightRight(t);
+		UpdateHeightLeft(y);
 
 		return y;
 	}
@@ -668,8 +693,8 @@ private:
 
 		x->parent = parent;
 
-		t->height = std::max(Height(t->left), Height(t->right)) + 1;
-		x->height = std::max(Height(x->left), Height(x->right)) + 1;
+		UpdateHeightLeft(t);
+		UpdateHeightRight(x);
 
 		return x;
 	}
@@ -742,7 +767,7 @@ private:
 
 
 	static AvlNode* UpdateOnDelete(AvlNode* t) noexcept {
-		t->height = std::max(Height(t->left), Height(t->right)) + 1;
+		UpdateHeight(t);
 
 		const int balance = GetBalance(t);
 
@@ -846,10 +871,10 @@ private:
 
 		return UpdateOnDelete(t);
 	}
-	static int GetBalance(AvlNode* t) noexcept {
+	static int16_t GetBalance(AvlNode* t) noexcept {
 		if (t == nullptr)
 			return 0;
-		return Height(t->left) - Height(t->right);
+		return t->heightLeft - t->heightRight;
 	}
 	void MakeEmpty(AvlNode* t) noexcept {
 		if (t == nullptr) return;
@@ -857,6 +882,18 @@ private:
 		MakeEmpty(t->right);
 		t->~AvlNode();
 		Alloc.deallocate(t, 1);
+	}
+
+	static inline void UpdateHeightLeft(AvlNode* t) {
+		t->heightLeft = Height(t->left) + 1;
+	}
+	static inline void UpdateHeightRight(AvlNode* t) {
+		t->heightRight= Height(t->right) + 1;
+	}
+
+	static inline void UpdateHeight(AvlNode* t) {
+		t->heightLeft = Height(t->left) + 1;
+		t->heightRight = Height(t->right) + 1;
 	}
 
 public:
